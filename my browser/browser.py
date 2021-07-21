@@ -29,21 +29,60 @@ class MainWindow(QMainWindow):
 		navbar.addWidget(self.url_bar)
 		self.url_bar.returnPressed.connect(self.navigate_to_url)
 		
-		self.browser.urlChanged.connect(self.update_url)
+		#self.browser.urlChanged.connect(self.update_url)
+		self.tabs=QTabWidget()
+		self.tabs.setDocumentMode(True)
+		self.tabs.tabBarDoubleClicked.connect(self.tab_open_doubleClick)
+		self.tabs.currentChanged.connect(self.current_tab_changed)
+		self.tabs.setTabsClosable(True)
+		self.tabs.tabCloseRequested.connect(self.close_current_tab)
+		self.setCentralWidget(self.tabs)
+
+		self.add_new_tab()
 
 
 
 	def navigate_to_home(self):
 		home_page=r'https://google.com'
-		self.browser.setUrl(QUrl(home_page))
+		self.tabs.currentWidget().setUrl(QUrl(home_page))
 
 	def navigate_to_url(self):
 		url=self.url_bar.text()
-		self.browser.setUrl(QUrl(url))
+		self.tabs.currentWidget().setUrl(QUrl(url))
 
-	def update_url(self,new_url):
+	def update_url(self,new_url,browser=None):
+
+		if browser is not self.tabs.currentWidget():
+			return
 		self.url_bar.setText(new_url.toString())
 
+	def add_new_tab(self,qurl=None,label="Blank"):
+		if qurl is None:
+		    qurl=QUrl('https://google.com')
+		tab=QWebEngineView()
+		tab.setUrl(qurl)
+		i=self.tabs.addTab(tab,label)
+
+		tab.urlChanged.connect(lambda qurl,browser=tab:self.update_url(qurl,tab))
+		tab.loadFinished.connect(lambda _,i=i,browser=tab:
+		                            self.tabs.setTabText(i,tab.page().title()))
+
+	def tab_open_doubleClick(self,i):
+		if i== -1:
+			self.add_new_tab()
+	def current_tab_changed(self,i):
+		qurl=self.tabs.currentWidget().url()
+		self.update_url(qurl,self.tabs.currentWidget())
+		#self.update_title(self.tabs.currentWidget())
+	def close_current_tab(self,i):
+		if self.tabs.count()<2:
+			return
+		self.tabs.removeTab(i)
+	def update_title(self,browser):
+		if browse is not self.tabs.currentWidget():
+			return
+		title=self.tabs.currentWidget().page().title()
+		self.setWindowTitle(title)
 
 
 
@@ -52,3 +91,4 @@ app=QApplication(sys.argv)
 QApplication.setApplicationName("My Simple Browser")
 window=MainWindow()
 app.exec()
+
