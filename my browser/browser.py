@@ -6,23 +6,24 @@ import sys
 class MainWindow(QMainWindow):
 	def __init__(self):
 		super(MainWindow,self).__init__()
-		self.browser =QWebEngineView()
-		self.browser.setUrl(QUrl('https://google.com'))
-		self.setCentralWidget(self.browser)
+		global engine
+		engines=["http://www.google.com/","http://bing.com/","https://in.yahoo.com/",
+				"https://duckduckgo.com/","https://www.wolframalpha.com/","http://baidu.com/"]
+		engine=engines[0]
 		self.showMaximized()
 		#navigation bar
 		navbar=QToolBar()
 		self.addToolBar(navbar)
-		back_btn=QAction('<<<',self)
-		back_btn.triggered.connect(self.browser.back)
+		back_btn=QAction('🡰',self)
+		back_btn.triggered.connect(lambda:self.tabs.currentWidget().back())
 		navbar.addAction(back_btn)
-		forward_btn=QAction('>>>',self)
-		forward_btn.triggered.connect(self.browser.forward)
+		forward_btn=QAction('🡲',self)
+		forward_btn.triggered.connect(lambda:self.tabs.currentWidget().forward())
 		navbar.addAction(forward_btn)
-		reload_btn=QAction('(())',self)
-		reload_btn.triggered.connect(self.browser.reload)
+		reload_btn=QAction('⭮',self)
+		reload_btn.triggered.connect(lambda:self.tabs.currentWidget().reload())
 		navbar.addAction(reload_btn)
-		home_btn=QAction('home',self)
+		home_btn=QAction('⌂',self)
 		home_btn.triggered.connect(self.navigate_to_home)
 		navbar.addAction(home_btn)
 		self.url_bar=QLineEdit()
@@ -43,7 +44,7 @@ class MainWindow(QMainWindow):
 
 
 	def navigate_to_home(self):
-		home_page=r'https://google.com'
+		home_page=engine
 		self.tabs.currentWidget().setUrl(QUrl(home_page))
 
 	def navigate_to_url(self):
@@ -58,7 +59,7 @@ class MainWindow(QMainWindow):
 
 	def add_new_tab(self,qurl=None,label="Blank"):
 		if qurl is None:
-		    qurl=QUrl('https://google.com')
+		    qurl=QUrl(engine)
 		tab=QWebEngineView()
 		tab.setUrl(qurl)
 		i=self.tabs.addTab(tab,label)
@@ -91,4 +92,3 @@ app=QApplication(sys.argv)
 QApplication.setApplicationName("My Simple Browser")
 window=MainWindow()
 app.exec()
-
