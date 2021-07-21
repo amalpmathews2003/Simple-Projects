@@ -50,13 +50,6 @@ class MainWindow(QMainWindow):
 
 	def navigate_to_url(self):	
 		url=self.url_bar.text()
-		try:
-			self.tabs.currentWidget().setUrl(QUrl(url))
-		except 
-   			raise
-		else:
-			self.open_file_in_browser(url)
-
 		self.tabs.currentWidget().setUrl(QUrl(url))
 
 	def update_url(self,new_url,browser=None):
@@ -92,25 +85,6 @@ class MainWindow(QMainWindow):
 			return
 		title=self.tabs.currentWidget().page().title()
 		self.setWindowTitle(title)
-
-	def open_file_in_browser(self,path):
-		f = open('temp.html','w')
-		html=f"""
-				<!DOCTYPE html>
-				<html>
-				  <head>
-				    <title>Title of the document</title>
-				  </head>
-				  <body>
-				    <h1>PDF Example</h1>
-				    <p>Open a PDF file <a href={path}>example</a>.</p>
-				  </body>
-				</html>
-			"""
-		f.write(html)
-		f.close()
-		path=os.path.abspath("temp.html")
-		self.tabs.currentWidget().setUrl(QUrl(path))
 
 
 
