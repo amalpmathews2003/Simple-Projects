@@ -16,3 +16,8 @@ path=asksaveasfilename(initialfile=x,defaultextension=".png",filetypes=[("Image"
 
 image.save(f"{path}")
 
+"""
+import os
+
+os.system('python -m pip install pyscreenshot')
+"""
